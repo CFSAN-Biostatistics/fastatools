@@ -3,6 +3,12 @@
 History
 -------
 
+1.0.0 (2018-09-21)
+---------------------
+
+* Add length command to print the length of all the sequences in fasta files.
+
+
 0.1.0 (2017-11-30)
 ---------------------
 

@@ -24,7 +24,7 @@ test_requirements = [
 
 setup(
     name='fastatools',
-    version='0.1.0',
+    version='1.0.0',
     description="Tools to manipulate fasta files.",
     long_description=readme + '\n\n' + history,
     author="Steve Davis",

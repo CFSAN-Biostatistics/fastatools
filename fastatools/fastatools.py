@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -9,7 +10,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import sys
 
-__version__ = '0.1.0'
+__version__ = '1.0.0'
 
 def parse_arguments(system_args):
     """
@@ -33,12 +34,17 @@ def parse_arguments(system_args):
 
     formatter_class = argparse.ArgumentDefaultsHelpFormatter
 
+    description = "Print the lengths of sequences."
+    subparser = subparsers.add_parser("length", formatter_class=formatter_class, description=description, help=description)
+    subparser.add_argument(dest="fasta_path", type=str, metavar="FILE", help="Fasta file.", nargs='+')
+    subparser.set_defaults(func=length)
+
     description = "Generate a reverse complement of a fasta file."
     subparser = subparsers.add_parser("reverse", formatter_class=formatter_class, description=description, help=description)
     subparser.add_argument(dest="fasta_path", type=str, metavar="FILE", help="Fasta file.")
     subparser.set_defaults(func=reverse)
 
-    description = "Extract a slice from a fasta file."
+    description = "Extract a slice from a fasta file delimited by primers."
     subparser = subparsers.add_parser("slice", formatter_class=formatter_class, description=description, help=description)
     subparser.add_argument(type=str, dest="fwd_primer", metavar="FWD", help="Forward primer.")
     subparser.add_argument(type=str, dest="rev_primer", metavar="REV", help="Reverse primer.")
@@ -48,6 +54,21 @@ def parse_arguments(system_args):
 
     args = parser.parse_args(system_args)
     return args
+
+def length(args):
+    """Read a fasta file and print the lengths of all the sequences.
+
+    Parameters
+    ----------
+    args : Namespace
+        Command line arguments stored as attributes of a Namespace, usually
+        parsed from sys.argv
+    """
+    seqrecords = []
+    for path in args.fasta_path:
+        for seqrecord in SeqIO.parse(path, "fasta"):
+            print(path, len(seqrecord.seq), seqrecord.id);
+
 
 def reverse(args):
     """Read a fasta file and write its reverse complement to stdout.

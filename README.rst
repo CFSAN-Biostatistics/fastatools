@@ -19,7 +19,7 @@ fastatools
 
 Tools to manipulate fasta files.
 
-The fastatools was developed by the United States Food 
+The fastatools was developed by the United States Food
 and Drug Administration, Center for Food Safety and Applied Nutrition.
 
 * Free software
@@ -31,7 +31,10 @@ and Drug Administration, Center for Food Safety and Applied Nutrition.
 Features
 --------
 
-* TODO: Insert a bulleted list of features here
+* Print the lengths of sequences.
+* Generate a reverse complement of a fasta file.
+* Extract a slice from a fasta file delimited by primers.
+
 
 
 Citing fastatools
