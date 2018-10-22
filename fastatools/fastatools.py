@@ -52,8 +52,17 @@ def parse_arguments(system_args):
     subparser.add_argument("--no_rev_comp", action="store_true", default=False, dest="no_reverse_complement", help="Do not automatically reverse complement the reverse primer.")
     subparser.set_defaults(func=slice)
 
+    description = "Extract a range of positions from a fasta file."
+    subparser = subparsers.add_parser("range", formatter_class=formatter_class, description=description, help=description)
+    subparser.add_argument(type=str, dest="contig", metavar="id", help="Fasta contig id.")
+    subparser.add_argument(type=int, dest="start", help="Starting position.")
+    subparser.add_argument(type=int, dest="end", help="Ending position.")
+    subparser.add_argument(type=str, dest="fasta_path", metavar="FILE", help="Fasta file.")
+    subparser.set_defaults(func=range)
+
     args = parser.parse_args(system_args)
     return args
+
 
 def length(args):
     """Read a fasta file and print the lengths of all the sequences.
@@ -123,6 +132,27 @@ def slice(args):
         print("Reverse primer not found.", file=sys.stderr)
 
 
+def range(args):
+    """Extract a range of positions from a fasta file.
+
+    Parameters
+    ----------
+    args : Namespace
+        Command line arguments stored as attributes of a Namespace, usually
+        parsed from sys.argv
+    """
+    contig = args.contig
+    start_pos = args.start
+    end_pos = args.end
+
+    contig_found = False
+    for seqrecord in SeqIO.parse(args.fasta_path, "fasta"):
+        if seqrecord.id == contig:
+            seq = seqrecord.seq
+            print(seqrecord.seq[start_pos : 1 + end_pos])
+            return
+
+    print("Contig %s not found." % contig, file=sys.stderr)
 
 
 def main():

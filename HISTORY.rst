@@ -3,6 +3,11 @@
 History
 -------
 
+1.1.0 (2018-10-22)
+---------------------
+
+* Add range command to extract a range of positions from a fasta file.
+
 1.0.0 (2018-09-21)
 ---------------------
 
