@@ -3,10 +3,12 @@
 History
 -------
 
-1.1.0 (2018-10-22)
+1.1.0 (2018-10-25)
 ---------------------
 
 * Add range command to extract a range of positions from a fasta file.
+* Add equiv command to check for equivalent fasta files.
+* Add rewrite command to fix line length and uppercase/lowercase inconsistencies.
 
 1.0.0 (2018-09-21)
 ---------------------

@@ -39,6 +39,20 @@ def parse_arguments(system_args):
     subparser.add_argument(dest="fasta_path", type=str, metavar="FILE", help="Fasta file.", nargs='+')
     subparser.set_defaults(func=length)
 
+    help = "Determine if two sequences are equivalent."
+    description = "Determine if two sequences are equivalent, ignoring the line lengths and uppercase / lowercase characters."
+    subparser = subparsers.add_parser("equiv", formatter_class=formatter_class, description=description, help=help)
+    subparser.add_argument(dest="fasta_path1", type=str, metavar="FILE", help="Fasta file 1.")
+    subparser.add_argument(dest="fasta_path2", type=str, metavar="FILE", help="Fasta file 2.")
+    subparser.add_argument("--ignore_defline", action="store_true", default=False, dest="ignore_defline", help="Ignore the sequence description lines.")
+    subparser.set_defaults(func=equivalent)
+
+    description = "Fix inconsistent line lengths and inconsistent lowercase."
+    subparser = subparsers.add_parser("rewrite", formatter_class=formatter_class, description=description, help=description)
+    subparser.add_argument(dest="fasta_path", type=str, metavar="FILE", help="Fasta file.")
+    subparser.add_argument("--upper", action="store_true", default=False, dest="force_upper", help="Convert sequences to uppercase.")
+    subparser.set_defaults(func=rewrite)
+
     description = "Generate a reverse complement of a fasta file."
     subparser = subparsers.add_parser("reverse", formatter_class=formatter_class, description=description, help=description)
     subparser.add_argument(dest="fasta_path", type=str, metavar="FILE", help="Fasta file.")
@@ -58,7 +72,7 @@ def parse_arguments(system_args):
     subparser.add_argument(type=int, dest="start", help="Starting position.")
     subparser.add_argument(type=int, dest="end", help="Ending position.")
     subparser.add_argument(type=str, dest="fasta_path", metavar="FILE", help="Fasta file.")
-    subparser.set_defaults(func=range)
+    subparser.set_defaults(func=range_command)
 
     args = parser.parse_args(system_args)
     return args
@@ -79,6 +93,66 @@ def length(args):
             print(path, len(seqrecord.seq), seqrecord.id);
 
 
+def equivalent(args):
+    """Determine if two fasta files are equivalent.  This comparison
+    ignores sequence line lengths and uppercase / lowercase.
+
+    Parameters
+    ----------
+    args : Namespace
+        Command line arguments stored as attributes of a Namespace, usually
+        parsed from sys.argv
+    """
+    seqrecords1 = [seqrecord for seqrecord in SeqIO.parse(args.fasta_path1, "fasta")]
+    seqrecords2 = [seqrecord for seqrecord in SeqIO.parse(args.fasta_path2, "fasta")]
+    if len(seqrecords1) != len(seqrecords2):
+        print("Not equivalent -- the number of sequences is different (%d and %d)." % (len(seqrecords1), len(seqrecords2)))
+        return 1
+
+    equiv = True
+
+    if not args.ignore_defline:
+        for i, seq1, seq2 in zip(range(1, 1+len(seqrecords1)), seqrecords1, seqrecords2):
+            if len(seq1.description) != len(seq2.description):
+                print('Not equivalent -- sequence %d has different descriptions ("%s" and "%s").' % (i, seq1.description, seq2.description))
+                equiv = False
+        if not equiv:
+            return 1
+
+    for i, seq1, seq2 in zip(range(1, 1+len(seqrecords1)), seqrecords1, seqrecords2):
+        if len(seq1.seq) != len(seq2.seq):
+            print("Not equivalent -- sequence %d has different lengths (%d and %d)." % (i, len(seq1.seq), len(seq2.seq)))
+            equiv = False
+    if not equiv:
+        return 1
+
+    for i, seq1, seq2 in zip(range(1, 1+len(seqrecords1)), seqrecords1, seqrecords2):
+        if seq1.seq.upper() != seq2.seq.upper():
+            print("Not equivalent -- sequence %d has different contents." % (i))
+            equiv = False
+    if not equiv:
+        return 1
+
+    print("Equivalent")
+
+
+def rewrite(args):
+    """Fix inconsistent line lengths and uppercase lowercase.  Write to stdout.
+
+    Parameters
+    ----------
+    args : Namespace
+        Command line arguments stored as attributes of a Namespace, usually
+        parsed from sys.argv
+    """
+    seqrecords = []
+    for seqrecord in SeqIO.parse(args.fasta_path, "fasta"):
+        if args.force_upper:
+            seqrecord.seq = seqrecord.seq.upper()
+        seqrecords.append(seqrecord)
+    SeqIO.write(seqrecords, sys.stdout, "fasta")
+
+
 def reverse(args):
     """Read a fasta file and write its reverse complement to stdout.
 
@@ -94,7 +168,6 @@ def reverse(args):
         seqrecord.description = seqrecord.description + " reverse complement"
         seqrecords.append(seqrecord)
     SeqIO.write(seqrecords, sys.stdout, "fasta")
-
 
 def slice(args):
     """Extract a slice from a fasta file.
@@ -132,7 +205,7 @@ def slice(args):
         print("Reverse primer not found.", file=sys.stderr)
 
 
-def range(args):
+def range_command(args):
     """Extract a range of positions from a fasta file.
 
     Parameters
@@ -157,7 +230,7 @@ def range(args):
 
 def main():
     args = parse_arguments(sys.argv[1:])
-    args.func(args)
+    return args.func(args)
 
 
 if __name__ == '__main__':
