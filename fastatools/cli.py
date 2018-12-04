@@ -87,8 +87,8 @@ def parse_arguments(system_args):
     description = "Extract a range of positions from a fasta file."
     subparser = subparsers.add_parser("range", formatter_class=formatter_class, description=description, help=description)
     subparser.add_argument(type=str, dest="contig", metavar="id", help="Fasta contig id.")
-    subparser.add_argument(type=positive_int, dest="start", help="Starting position.")
-    subparser.add_argument(type=positive_int, dest="end", help="Ending position.")
+    subparser.add_argument(type=positive_int, dest="start", help="Starting position (1-based).")
+    subparser.add_argument(type=positive_int, dest="end", help="Ending position (1-based).")
     subparser.add_argument(type=str, dest="fasta_path", metavar="FILE", help="Fasta file.")
     subparser.set_defaults(func=range_command)
 

@@ -160,15 +160,13 @@ def range_command(fasta_path, contig, start_pos, end_pos):
     contig : str
         Fasta contig id.
     start_pos : int
-        Starting position.
+        Starting position (1-based).
     end_pos : int
-        Ending position.
+        Ending position (1-based).
     """
-    contig_found = False
     for seqrecord in SeqIO.parse(fasta_path, "fasta"):
         if seqrecord.id == contig:
-            seq = seqrecord.seq
-            print(seqrecord.seq[start_pos : 1 + end_pos])
+            print(seqrecord.seq[start_pos - 1: end_pos])
             return
 
     print("Contig %s not found." % contig, file=sys.stderr)
