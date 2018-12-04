@@ -16,6 +16,10 @@
 import sys
 import os
 
+# strings are automatically unicode in Python 3
+if sys.version_info >= (3,):
+    unicode = str
+
 # on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
@@ -222,8 +226,8 @@ latex_elements = {
 latex_documents = [
     ('index', 'fastatools.tex',
      u'fastatools Documentation',
-   unicode(fastatools.__author__), 
-   'manual'),
+     unicode(fastatools.__author__),
+     'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at

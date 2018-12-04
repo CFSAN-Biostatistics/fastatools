@@ -45,3 +45,6 @@ docs/_build
 # Data files
 *.fa
 *.fasta
+
+# Other
+testing

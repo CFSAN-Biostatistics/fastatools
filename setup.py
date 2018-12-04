@@ -19,13 +19,13 @@ requirements = [
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    "pytest",
 ]
 
 setup(
     name='fastatools',
     version='1.1.0',
-    description="Tools to manipulate fasta files.",
+    description="Tools for working with fasta files.",
     long_description=readme + '\n\n' + history,
     author="Steve Davis",
     author_email='steven.davis@fda.hhs.gov',
@@ -46,13 +46,13 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
         "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     entry_points={'console_scripts': ['fastatools = fastatools.cli:main']},
-    test_suite='tests',
+    setup_requires=["pytest-runner"],
     tests_require=test_requirements
 )

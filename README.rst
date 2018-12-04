@@ -7,23 +7,19 @@ fastatools
 .. image:: https://img.shields.io/pypi/v/fastatools.svg
         :target: https://pypi.python.org/pypi/fastatools
 
-.. Image showing the PyPi download per month count  - links to PyPI
-.. image:: https://img.shields.io/pypi/dm/fastatools.svg
-        :target: https://pypi.python.org/pypi/fastatools
-
 .. Image showing the Travis Continuous Integration test status, commented out for now
 .. .. image:: https://img.shields.io/travis/CFSAN-Biostatistics/fastatools.svg
 ..        :target: https://travis-ci.org/CFSAN-Biostatistics/fastatools
 
 
 
-Tools to manipulate fasta files.
+Tools for working with fasta files.
 
-The fastatools was developed by the United States Food
+The fastatools package was developed by the United States Food
 and Drug Administration, Center for Food Safety and Applied Nutrition.
 
 * Free software
-* Documentation: https://fastatools.readthedocs.org.
+* Documentation: https://fastatools.readthedocs.io
 * Source Code: https://github.com/CFSAN-Biostatistics/fastatools
 * PyPI Distribution: https://pypi.python.org/pypi/fastatools
 
