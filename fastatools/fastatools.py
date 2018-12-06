@@ -10,7 +10,6 @@ from __future__ import absolute_import
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 from Bio.Seq import Seq
-import logging
 import sys
 
 
