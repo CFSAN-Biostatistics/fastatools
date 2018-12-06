@@ -174,6 +174,15 @@ def test_between(tmpdir, capsys):
     assert(captured.out == "AATTCCGGA" + "GATACA" + "AATTCCGGT\n")
 
 
+def test_between_not_found(tmpdir, capsys):
+    """Verify message when missing primers."""
+    seq_strings = ['A' * 20 + "AATTCCGGA" + "GATACA" + "AATTCCGGT" + 'A' * 20]
+    path1 = write_fasta(seq_strings, tmpdir, "file1")
+    fastatools.between(path1, "TTTTTT", "GGGGGG", no_reverse_complement=True)
+    captured = capsys.readouterr()
+    assert(captured.err == "Forward primer not found.\nReverse primer not found.\n")
+
+
 def test_range(tmpdir, capsys):
     """Verify extracting a range of positions."""
     seq_strings = ["ATTCCGGA"]
