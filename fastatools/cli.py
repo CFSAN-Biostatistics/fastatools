@@ -77,12 +77,12 @@ def parse_arguments(system_args):
     subparser.set_defaults(func=reverse_command)
 
     description = "Extract a slice from a fasta file delimited by primers."
-    subparser = subparsers.add_parser("slice", formatter_class=formatter_class, description=description, help=description)
+    subparser = subparsers.add_parser("between", formatter_class=formatter_class, description=description, help=description)
     subparser.add_argument(type=str, dest="fwd_primer", metavar="FWD", help="Forward primer.")
     subparser.add_argument(type=str, dest="rev_primer", metavar="REV", help="Reverse primer.")
     subparser.add_argument(type=str, dest="fasta_path", metavar="FILE", help="Fasta file.")
     subparser.add_argument("--no_rev_comp", action="store_true", default=False, dest="no_reverse_complement", help="Do not automatically reverse complement the reverse primer.")
-    subparser.set_defaults(func=slice_command)
+    subparser.set_defaults(func=between_command)
 
     description = "Extract a range of positions from a fasta file."
     subparser = subparsers.add_parser("range", formatter_class=formatter_class, description=description, help=description)
@@ -144,7 +144,7 @@ def reverse_command(args):
     return fastatools.reverse(args.fasta_path)
 
 
-def slice_command(args):
+def between_command(args):
     """Extract a slice from a fasta file delimited by primers.
 
     Parameters
@@ -153,7 +153,7 @@ def slice_command(args):
         Command line arguments stored as attributes of a Namespace, usually
         parsed from sys.argv
     """
-    return fastatools.slice(args.fasta_path, args.fwd_primer, args.rev_primer, no_reverse_complement=args.no_reverse_complement)
+    return fastatools.between(args.fasta_path, args.fwd_primer, args.rev_primer, no_reverse_complement=args.no_reverse_complement)
 
 
 def range_command(args):

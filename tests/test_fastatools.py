@@ -165,11 +165,11 @@ def test_reverse(tmpdir, capsys):
     assert(lines[1] == "CGAT")
 
 
-def test_slice(tmpdir, capsys):
+def test_between(tmpdir, capsys):
     """Verify extraction between primers."""
     seq_strings = ['A' * 20 + "AATTCCGGA" + "GATACA" + "AATTCCGGT" + 'A' * 20]
     path1 = write_fasta(seq_strings, tmpdir, "file1")
-    fastatools.slice(path1, "AATTCCGGA", "AATTCCGGT", no_reverse_complement=True)
+    fastatools.between(path1, "AATTCCGGA", "AATTCCGGT", no_reverse_complement=True)
     captured = capsys.readouterr()
     assert(captured.out == "AATTCCGGA" + "GATACA" + "AATTCCGGT\n")
 

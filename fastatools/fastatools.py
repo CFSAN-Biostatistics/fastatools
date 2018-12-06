@@ -107,7 +107,7 @@ def reverse(fasta_path):
     SeqIO.write(seqrecords, sys.stdout, "fasta")
 
 
-def slice(fasta_path, fwd_primer, rev_primer, no_reverse_complement=False):
+def between(fasta_path, fwd_primer, rev_primer, no_reverse_complement=False):
     """Extract a slice from a fasta file.
 
     Parameters
