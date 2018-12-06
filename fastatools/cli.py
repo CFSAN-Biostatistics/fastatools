@@ -117,7 +117,7 @@ def equivalent_command(args):
         Command line arguments stored as attributes of a Namespace, usually
         parsed from sys.argv
     """
-    return fastatools.equivalent(args.fasta_path1, args.fasta_path2, args.ignore_defline)
+    return fastatools.equivalent(args.fasta_path1, args.fasta_path2, ignore_defline=args.ignore_defline)
 
 
 def rewrite_command(args):
@@ -129,7 +129,7 @@ def rewrite_command(args):
         Command line arguments stored as attributes of a Namespace, usually
         parsed from sys.argv
     """
-    return fastatools.rewrite(args.fasta_path, args.force_upper)
+    return fastatools.rewrite(args.fasta_path, force_upper=args.force_upper)
 
 
 def reverse_command(args):
@@ -153,7 +153,7 @@ def slice_command(args):
         Command line arguments stored as attributes of a Namespace, usually
         parsed from sys.argv
     """
-    return fastatools.slice(args.fasta_path, args.fwd_primer, args.rev_primer, args.no_reverse_complement)
+    return fastatools.slice(args.fasta_path, args.fwd_primer, args.rev_primer, no_reverse_complement=args.no_reverse_complement)
 
 
 def range_command(args):

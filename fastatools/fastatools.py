@@ -10,7 +10,6 @@ from __future__ import absolute_import
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 import logging
 import sys
 
@@ -23,13 +22,12 @@ def length(fasta_paths):
     fasta_paths : list of str
         List of fasta file paths to process
     """
-    seqrecords = []
     for path in fasta_paths:
         for seqrecord in SeqIO.parse(path, "fasta"):
-            print(path, len(seqrecord.seq), seqrecord.id);
+            print(path, len(seqrecord.seq), seqrecord.id)
 
 
-def equivalent(fasta_path1, fasta_path2, ignore_defline):
+def equivalent(fasta_path1, fasta_path2, ignore_defline=False):
     """Determine if two fasta files are equivalent.  This comparison
     ignores sequence line lengths and uppercase / lowercase.
 
@@ -39,8 +37,8 @@ def equivalent(fasta_path1, fasta_path2, ignore_defline):
         Fasta file path.
     fasta_path2 : str
         Fasta file path.
-    ignore_defline : bool
-        When true, ignore the sequence description lines.
+    ignore_defline : bool, optional
+        When true, ignore the sequence description lines.  Defaults to False.
     """
     seqrecords1 = [seqrecord for seqrecord in SeqIO.parse(fasta_path1, "fasta")]
     seqrecords2 = [seqrecord for seqrecord in SeqIO.parse(fasta_path2, "fasta")]
@@ -52,7 +50,7 @@ def equivalent(fasta_path1, fasta_path2, ignore_defline):
 
     if not ignore_defline:
         for i, seq1, seq2 in zip(range(1, 1+len(seqrecords1)), seqrecords1, seqrecords2):
-            if len(seq1.description) != len(seq2.description):
+            if seq1.description != seq2.description:
                 print('Not equivalent -- sequence %d has different descriptions ("%s" and "%s").' % (i, seq1.description, seq2.description))
                 equiv = False
         if not equiv:
@@ -75,15 +73,15 @@ def equivalent(fasta_path1, fasta_path2, ignore_defline):
     print("Equivalent")
 
 
-def rewrite(fasta_path, force_upper):
+def rewrite(fasta_path, force_upper=True):
     """Fix inconsistent line lengths and uppercase lowercase.  Write to stdout.
 
     Parameters
     ----------
     fasta_path : str
         Fasta file path.
-    force_upper : bool
-        Convert sequences to uppercase.
+    force_upper : bool, optional
+        Convert sequences to uppercase. Defaults to True.
     """
     seqrecords = []
     for seqrecord in SeqIO.parse(fasta_path, "fasta"):
@@ -109,7 +107,7 @@ def reverse(fasta_path):
     SeqIO.write(seqrecords, sys.stdout, "fasta")
 
 
-def slice(fasta_path, fwd_primer, rev_primer, no_reverse_complement):
+def slice(fasta_path, fwd_primer, rev_primer, no_reverse_complement=False):
     """Extract a slice from a fasta file.
 
     Parameters
@@ -120,8 +118,8 @@ def slice(fasta_path, fwd_primer, rev_primer, no_reverse_complement):
         Forward primer.
     rev_primer : str
         Reverse primer.
-    no_reverse_complement : bool
-        Do not automatically reverse complement the reverse primer.
+    no_reverse_complement : bool, optional
+        Do not automatically reverse complement the reverse primer.  Defaults to False.
     """
     fwd_primer = fwd_primer.upper()
     rev_primer = rev_primer.upper()
@@ -141,7 +139,7 @@ def slice(fasta_path, fwd_primer, rev_primer, no_reverse_complement):
         if rindex == -1:
             continue
         rev_found = True
-        print(seqrecord.seq[findex : rindex + len(rev_primer)])
+        print(seqrecord.seq[findex: rindex + len(rev_primer)])
         return
 
     if not fwd_found:
