@@ -10,6 +10,7 @@ Tests for `fastatools` module.
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
+import logging
 import pytest
 
 from fastatools import fastatools
@@ -49,21 +50,19 @@ def write_fasta(seq_strings, tmpdir, file_name, defline_prefix=""):
     return file_path
 
 
-def test_verify_file_exists_when_exists(tmpdir, capsys):
+def test_verify_file_exists_when_exists(tmpdir, caplog):
     """Verify no error message and no system exit upon existing file."""
     existing_file = write_fasta(['A'], tmpdir, "existing")
     fastatools.verify_file_exists(existing_file)
-    captured = capsys.readouterr()
-    assert(captured.err == "")
+    assert(caplog.text == "")
 
 
-def test_verify_file_exists_when_missing(tmpdir, capsys):
+def test_verify_file_exists_when_missing(tmpdir, caplog):
     """Verify error message and system exit upon non-existing file."""
     missing_file = str(tmpdir.join("missing"))
     with pytest.raises(SystemExit):
         fastatools.verify_file_exists(missing_file)
-        captured = capsys.readouterr()
-        assert("does not exist" in captured.err)
+        assert("does not exist" in caplog.text)
 
 
 def test_length(tmpdir, capsys):
@@ -215,13 +214,13 @@ def test_between(tmpdir, capsys):
     assert(captured.out == "AATTCCGGA" + "GATACA" + "AATTCCGGT\n")
 
 
-def test_between_not_found(tmpdir, capsys):
+def test_between_not_found(tmpdir, caplog):
     """Verify message when missing primers."""
+    caplog.set_level(logging.INFO)
     seq_strings = ['A' * 20 + "AATTCCGGA" + "GATACA" + "AATTCCGGT" + 'A' * 20]
     path1 = write_fasta(seq_strings, tmpdir, "file1")
     fastatools.between(path1, "TTTTTT", "GGGGGG", no_reverse_complement=True)
-    captured = capsys.readouterr()
-    assert(captured.err == "Forward primer not found.\nReverse primer not found.\n")
+    assert(caplog.text == "Forward primer not found.\nReverse primer not found.\n")
 
 
 def test_range(tmpdir, capsys):

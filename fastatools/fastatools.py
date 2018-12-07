@@ -186,9 +186,9 @@ def between(fasta_path, fwd_primer, rev_primer, no_reverse_complement=False):
         return
 
     if not fwd_found:
-        print("Forward primer not found.", file=sys.stderr)
+        logging.info("Forward primer not found.")
     if not rev_found:
-        print("Reverse primer not found.", file=sys.stderr)
+        logging.info("Reverse primer not found.")
 
 
 def range_command(fasta_path, contig, start_pos, end_pos):
@@ -212,4 +212,4 @@ def range_command(fasta_path, contig, start_pos, end_pos):
             print(seqrecord.seq[start_pos - 1: end_pos])
             return
 
-    print("Contig %s not found." % contig, file=sys.stderr)
+    logging.info("Contig %s not found." % contig)
