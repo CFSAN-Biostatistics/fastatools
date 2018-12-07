@@ -11,10 +11,25 @@ from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 from Bio.Seq import Seq
 import collections
+import logging
+import os
 import sys
 
 
 FastaSequence = collections.namedtuple("FastaSequence", ["length", "id", "seq", "original_order"])
+
+
+def verify_file_exists(path):
+    """Exit with error message if specified file does not exist.
+
+    Parameters
+    ----------
+    path : str
+        File path.
+    """
+    if not os.path.isfile(path):
+        logging.error("Error: the file %s does not exist." % path)
+        sys.exit(1)
 
 
 def length(fasta_paths):
@@ -26,6 +41,10 @@ def length(fasta_paths):
         List of fasta file paths to process
     """
     for path in fasta_paths:
+        if not os.path.isfile(path):
+            logging.info("Error: the file %s does not exist." % path)
+            continue
+
         for seqrecord in SeqIO.parse(path, "fasta"):
             print(path, len(seqrecord.seq), seqrecord.id)
 
@@ -45,6 +64,9 @@ def equivalent(fasta_path1, fasta_path2, ignore_defline=False, enforce_order=Fal
     enforce_order : bool, optional
         When true, require sequences to be in the same order.  Defaults to False.
     """
+    verify_file_exists(fasta_path1)
+    verify_file_exists(fasta_path2)
+
     seqrecords1 = [seqrecord for seqrecord in SeqIO.parse(fasta_path1, "fasta")]
     seqrecords2 = [seqrecord for seqrecord in SeqIO.parse(fasta_path2, "fasta")]
 
@@ -98,6 +120,8 @@ def rewrite(fasta_path, force_upper=True):
     force_upper : bool, optional
         Convert sequences to uppercase. Defaults to True.
     """
+    verify_file_exists(fasta_path)
+
     seqrecords = []
     for seqrecord in SeqIO.parse(fasta_path, "fasta"):
         if force_upper:
@@ -114,6 +138,8 @@ def reverse(fasta_path):
     fasta_path : str
         Fasta file path.
     """
+    verify_file_exists(fasta_path)
+
     seqrecords = []
     for seqrecord in SeqIO.parse(fasta_path, "fasta"):
         seqrecord.seq = seqrecord.seq.reverse_complement()
@@ -136,6 +162,8 @@ def between(fasta_path, fwd_primer, rev_primer, no_reverse_complement=False):
     no_reverse_complement : bool, optional
         Do not automatically reverse complement the reverse primer.  Defaults to False.
     """
+    verify_file_exists(fasta_path)
+
     fwd_primer = fwd_primer.upper()
     rev_primer = rev_primer.upper()
 
@@ -177,6 +205,8 @@ def range_command(fasta_path, contig, start_pos, end_pos):
     end_pos : int
         Ending position (1-based).
     """
+    verify_file_exists(fasta_path)
+
     for seqrecord in SeqIO.parse(fasta_path, "fasta"):
         if seqrecord.id == contig:
             print(seqrecord.seq[start_pos - 1: end_pos])

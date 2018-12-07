@@ -10,6 +10,7 @@ Tests for `fastatools` module.
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
+import pytest
 
 from fastatools import fastatools
 
@@ -46,6 +47,23 @@ def write_fasta(seq_strings, tmpdir, file_name, defline_prefix=""):
     file_path = str(tmpdir.join(file_name))
     SeqIO.write(records, file_path, "fasta")
     return file_path
+
+
+def test_verify_file_exists_when_exists(tmpdir, capsys):
+    """Verify no error message and no system exit upon existing file."""
+    existing_file = write_fasta(['A'], tmpdir, "existing")
+    fastatools.verify_file_exists(existing_file)
+    captured = capsys.readouterr()
+    assert(captured.err == "")
+
+
+def test_verify_file_exists_when_missing(tmpdir, capsys):
+    """Verify error message and system exit upon non-existing file."""
+    missing_file = str(tmpdir.join("missing"))
+    with pytest.raises(SystemExit):
+        fastatools.verify_file_exists(missing_file)
+        captured = capsys.readouterr()
+        assert("does not exist" in captured.err)
 
 
 def test_length(tmpdir, capsys):
