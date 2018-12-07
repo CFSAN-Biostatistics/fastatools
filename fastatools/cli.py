@@ -62,6 +62,7 @@ def parse_arguments(system_args):
     subparser = subparsers.add_parser("equiv", formatter_class=formatter_class, description=description, help=help_str)
     subparser.add_argument(dest="fasta_path1", type=str, metavar="FILE", help="Fasta file 1.")
     subparser.add_argument(dest="fasta_path2", type=str, metavar="FILE", help="Fasta file 2.")
+    subparser.add_argument("--order", action="store_true", default=False, dest="enforce_order", help="Require same sequence order when there are multiple sequences.")
     subparser.add_argument("--ignore_defline", action="store_true", default=False, dest="ignore_defline", help="Ignore the sequence description lines.")
     subparser.set_defaults(func=equivalent_command)
 
@@ -117,7 +118,7 @@ def equivalent_command(args):
         Command line arguments stored as attributes of a Namespace, usually
         parsed from sys.argv
     """
-    return fastatools.equivalent(args.fasta_path1, args.fasta_path2, ignore_defline=args.ignore_defline)
+    return fastatools.equivalent(args.fasta_path1, args.fasta_path2, ignore_defline=args.ignore_defline, enforce_order=args.enforce_order)
 
 
 def rewrite_command(args):

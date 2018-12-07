@@ -121,6 +121,29 @@ def test_equivalent_different_contents(tmpdir, capsys):
     assert(captured.out == 'Not equivalent -- sequence 1 has different contents.\n')
 
 
+def test_equivalent_enforce_order(tmpdir, capsys):
+    """Verify the sequences must be in the same order"""
+    seq_strings = ['A' * 10, 'T' * 100]
+    path1 = write_fasta(seq_strings, tmpdir, "file1")
+    seq_strings = ['T' * 100, 'A' * 10]
+    path2 = write_fasta(seq_strings, tmpdir, "file2")
+    fastatools.equivalent(path1, path2, ignore_defline=True, enforce_order=True)
+    captured = capsys.readouterr()
+    assert(captured.out == 'Not equivalent -- sequence 1 has different lengths (10 and 100).\n'
+                           'Not equivalent -- sequence 2 has different lengths (100 and 10).\n')
+
+
+def test_equivalent_ignore_order(tmpdir, capsys):
+    """Verify the sequences can be in different order"""
+    seq_strings = ['A' * 10, 'T' * 100]
+    path1 = write_fasta(seq_strings, tmpdir, "file1")
+    seq_strings = ['T' * 100, 'A' * 10]
+    path2 = write_fasta(seq_strings, tmpdir, "file2")
+    fastatools.equivalent(path1, path2, ignore_defline=True, enforce_order=False)
+    captured = capsys.readouterr()
+    assert(captured.out == "Equivalent\n")
+
+
 def test_rewrite_line_length(tmpdir, capsys):
     """Verify line length is fixed."""
     seq_strings = ['A']

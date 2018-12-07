@@ -10,7 +10,11 @@ from __future__ import absolute_import
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 from Bio.Seq import Seq
+import collections
 import sys
+
+
+FastaSequence = collections.namedtuple("FastaSequence", ["length", "id", "seq", "original_order"])
 
 
 def length(fasta_paths):
@@ -26,7 +30,7 @@ def length(fasta_paths):
             print(path, len(seqrecord.seq), seqrecord.id)
 
 
-def equivalent(fasta_path1, fasta_path2, ignore_defline=False):
+def equivalent(fasta_path1, fasta_path2, ignore_defline=False, enforce_order=False):
     """Determine if two fasta files are equivalent.  This comparison
     ignores sequence line lengths and uppercase / lowercase.
 
@@ -38,33 +42,45 @@ def equivalent(fasta_path1, fasta_path2, ignore_defline=False):
         Fasta file path.
     ignore_defline : bool, optional
         When true, ignore the sequence description lines.  Defaults to False.
+    enforce_order : bool, optional
+        When true, require sequences to be in the same order.  Defaults to False.
     """
     seqrecords1 = [seqrecord for seqrecord in SeqIO.parse(fasta_path1, "fasta")]
     seqrecords2 = [seqrecord for seqrecord in SeqIO.parse(fasta_path2, "fasta")]
+
     if len(seqrecords1) != len(seqrecords2):
         print("Not equivalent -- the number of sequences is different (%d and %d)." % (len(seqrecords1), len(seqrecords2)))
         return 1
 
+    FastaSequence = collections.namedtuple("FastaSequence", ["length", "description", "seq", "original_order"])
+    seqrecords1 = [FastaSequence(len(seq.seq), seq.description, seq.seq, i + 1) for i, seq in enumerate(seqrecords1)]
+    seqrecords2 = [FastaSequence(len(seq.seq), seq.description, seq.seq, i + 1) for i, seq in enumerate(seqrecords2)]
+
+    if not enforce_order:
+        # sort by sequence length, then description
+        seqrecords1 = sorted(seqrecords1)
+        seqrecords2 = sorted(seqrecords2)
+
     equiv = True
 
     if not ignore_defline:
-        for i, seq1, seq2 in zip(range(1, 1+len(seqrecords1)), seqrecords1, seqrecords2):
+        for seq1, seq2 in zip(seqrecords1, seqrecords2):
             if seq1.description != seq2.description:
-                print('Not equivalent -- sequence %d has different descriptions ("%s" and "%s").' % (i, seq1.description, seq2.description))
+                print('Not equivalent -- sequence %d has different descriptions ("%s" and "%s").' % (seq1.original_order, seq1.description, seq2.description))
                 equiv = False
         if not equiv:
             return 1
 
-    for i, seq1, seq2 in zip(range(1, 1+len(seqrecords1)), seqrecords1, seqrecords2):
+    for seq1, seq2 in zip(seqrecords1, seqrecords2):
         if len(seq1.seq) != len(seq2.seq):
-            print("Not equivalent -- sequence %d has different lengths (%d and %d)." % (i, len(seq1.seq), len(seq2.seq)))
+            print("Not equivalent -- sequence %d has different lengths (%d and %d)." % (seq1.original_order, len(seq1.seq), len(seq2.seq)))
             equiv = False
     if not equiv:
         return 1
 
-    for i, seq1, seq2 in zip(range(1, 1+len(seqrecords1)), seqrecords1, seqrecords2):
+    for seq1, seq2 in zip(seqrecords1, seqrecords2):
         if seq1.seq.upper() != seq2.seq.upper():
-            print("Not equivalent -- sequence %d has different contents." % (i))
+            print("Not equivalent -- sequence %d has different contents." % (seq1.original_order))
             equiv = False
     if not equiv:
         return 1
