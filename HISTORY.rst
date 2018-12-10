@@ -3,6 +3,11 @@
 History
 -------
 
+1.2.0 (2018-12-10)
+---------------------
+
+* First public release with docs and automated tests.
+
 1.1.0 (2018-10-25)
 ---------------------
 
