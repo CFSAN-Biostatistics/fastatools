@@ -57,8 +57,8 @@ def parse_arguments(system_args):
     subparser.add_argument(dest="fasta_paths", type=str, metavar="FILE", help="Fasta file.", nargs='+')
     subparser.set_defaults(func=length_command)
 
-    help_str = "Determine if two sequences are equivalent."
-    description = "Determine if two sequences are equivalent, ignoring the line lengths and uppercase / lowercase characters."
+    help_str = "Determine if two fasta files are equivalent."
+    description = "Determine if two fasta files are equivalent, ignoring the line lengths, uppercase / lowercase characters, and sequence order."
     subparser = subparsers.add_parser("equiv", formatter_class=formatter_class, description=description, help=help_str)
     subparser.add_argument(dest="fasta_path1", type=str, metavar="FILE", help="Fasta file 1.")
     subparser.add_argument(dest="fasta_path2", type=str, metavar="FILE", help="Fasta file 2.")

@@ -28,8 +28,11 @@ Features
 --------
 
 * Print the lengths of sequences.
+* Determine if two fasta files are equivalent.
+* Fix inconsistent line lengths and inconsistent lowercase.
 * Generate a reverse complement of a fasta file.
 * Extract a slice from a fasta file delimited by primers.
+* Extract a range of positions from a fasta file.
 
 
 
